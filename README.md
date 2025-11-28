@@ -15,6 +15,3 @@ A small Unity + .NET API project showcasing backend communication, physics gamep
 - ASP.NET Core Web API
 - Entity Framework Core + SQLite
 - GitHub Desktop
-
-## How it works
-(…)
