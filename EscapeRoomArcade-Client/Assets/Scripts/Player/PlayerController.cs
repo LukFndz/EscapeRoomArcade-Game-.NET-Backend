@@ -71,6 +71,12 @@ namespace Assets.Scripts.Player
             if (_rb != null)
                 _rb.velocity = Vector2.zero;
         }
+
+        public void EnableInput()
+        {
+            _inputEnabled = true;
+        }
+
         #endregion
     }
 }

@@ -19,7 +19,7 @@ namespace Assets.Scripts.Api
             _createButton.onClick.AddListener(OnCreateClicked);
             _loginButton.onClick.AddListener(OnLoginClicked);
 
-            StartCoroutine(AutoLoginRoutine());
+            //StartCoroutine(AutoLoginRoutine());
         }
         #endregion
 
@@ -89,8 +89,7 @@ namespace Assets.Scripts.Api
 
         private void OnLoginSuccess()
         {
-            // load next scene or enable gameplay UI
-            // UnityEngine.SceneManagement.SceneManager.LoadScene("GameScene");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
         }
 
         private void SetMessage(string msg)

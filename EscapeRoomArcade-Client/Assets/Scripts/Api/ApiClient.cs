@@ -4,20 +4,13 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Assets.Scripts.Api
-
 {
     public class ApiClient : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField, Tooltip("Base URL of the backend API, e.g. https://localhost:7273")]
-        private string _baseUrl = "https://localhost:7273";
-        #endregion
+        [SerializeField] private string _baseUrl = "https://localhost:7273";
 
-        #region Properties
         public static ApiClient Instance { get; private set; }
-        #endregion
 
-        #region Monobehaviour Functions
         private void Awake()
         {
             if (Instance != null)
@@ -29,14 +22,14 @@ namespace Assets.Scripts.Api
             Instance = this;
             DontDestroyOnLoad(gameObject);
         }
-        #endregion
 
-        #region Public Functions
+        // ------------------------- USER -------------------------
+
         public IEnumerator CreateUser(string playerName, System.Action<bool, string> callback)
         {
             var url = $"{_baseUrl}/api/user/create";
-            var formJson = $"{{\"playerName\":\"{EscapeJson(playerName)}\"}}";
-            yield return PostJson(url, formJson, callback);
+            var json = $"{{\"playerName\":\"{EscapeJson(playerName)}\"}}";
+            yield return PostJson(url, json, callback);
         }
 
         public IEnumerator Login(string playerName, System.Action<bool, string> callback)
@@ -49,25 +42,21 @@ namespace Assets.Scripts.Api
             while (!op.isDone) yield return null;
 
 #if UNITY_2020_1_OR_NEWER
-            bool isError = req.result == UnityWebRequest.Result.ConnectionError ||
-                           req.result == UnityWebRequest.Result.ProtocolError;
+            bool isError = req.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError;
 #else
-    bool isError = req.isNetworkError || req.isHttpError;
+            bool isError = req.isNetworkError || req.isHttpError;
 #endif
 
-            string serverMessage = req.downloadHandler.text;
+            string txt = req.downloadHandler.text;
+            callback(!isError, isError ? (txt != "" ? txt : req.error) : txt);
+        }
 
-            if (isError)
-            {
-                if (!string.IsNullOrEmpty(serverMessage))
-                    callback(false, serverMessage);
-                else
-                    callback(false, req.error);
-            }
-            else
-            {
-                callback(true, serverMessage);
-            }
+        // ------------------------- GAME END / LEADERBOARD -------------------------
+
+        public IEnumerator EndRun(string jsonPayload, System.Action<bool, string> callback)
+        {
+            var url = $"{_baseUrl}/api/game/end";
+            yield return PostJson(url, jsonPayload, callback);
         }
 
         public IEnumerator GetLeaderboard(System.Action<bool, string> callback)
@@ -80,36 +69,36 @@ namespace Assets.Scripts.Api
             while (!op.isDone) yield return null;
 
 #if UNITY_2020_1_OR_NEWER
-            bool isError = req.result == UnityWebRequest.Result.ConnectionError ||
-                           req.result == UnityWebRequest.Result.ProtocolError;
+            bool isError = req.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError;
 #else
-    bool isError = req.isNetworkError || req.isHttpError;
+            bool isError = req.isNetworkError || req.isHttpError;
 #endif
 
-            string serverMessage = req.downloadHandler.text;
-
-            if (isError)
-            {
-                if (!string.IsNullOrEmpty(serverMessage))
-                    callback(false, serverMessage);
-                else
-                    callback(false, req.error);
-            }
-            else
-            {
-                callback(true, serverMessage);
-            }
+            string txt = req.downloadHandler.text;
+            callback(!isError, isError ? (txt != "" ? txt : req.error) : txt);
         }
 
-
-        public IEnumerator EndRun(string jsonPayload, System.Action<bool, string> callback)
+        public IEnumerator GetRank(string playerName, System.Action<bool, string> callback)
         {
-            var url = $"{_baseUrl}/api/game/end";
-            yield return PostJson(url, jsonPayload, callback);
-        }
-        #endregion
+            var url = $"{_baseUrl}/api/user/rank/{UnityWebRequest.EscapeURL(playerName)}";
+            using var req = UnityWebRequest.Get(url);
+            req.SetRequestHeader("Content-Type", "application/json");
 
-        #region Private Functions
+            var op = req.SendWebRequest();
+            while (!op.isDone) yield return null;
+
+#if UNITY_2020_1_OR_NEWER
+            bool isError = req.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError;
+#else
+            bool isError = req.isNetworkError || req.isHttpError;
+#endif
+
+            string txt = req.downloadHandler.text;
+            callback(!isError, isError ? (txt != "" ? txt : req.error) : txt);
+        }
+
+        // ------------------------- INTERNAL -------------------------
+
         private IEnumerator PostJson(string url, string json, System.Action<bool, string> callback)
         {
             var body = Encoding.UTF8.GetBytes(json);
@@ -122,33 +111,15 @@ namespace Assets.Scripts.Api
             while (!op.isDone) yield return null;
 
 #if UNITY_2020_1_OR_NEWER
-            bool isError = req.result == UnityWebRequest.Result.ConnectionError ||
-                           req.result == UnityWebRequest.Result.ProtocolError;
+            bool isError = req.result is UnityWebRequest.Result.ConnectionError or UnityWebRequest.Result.ProtocolError;
 #else
-    bool isError = req.isNetworkError || req.isHttpError;
+            bool isError = req.isNetworkError || req.isHttpError;
 #endif
 
-            string serverMessage = req.downloadHandler.text;
-
-            if (isError)
-            {
-                // If server returned a meaningful message, use it.
-                if (!string.IsNullOrEmpty(serverMessage))
-                    callback(false, serverMessage);
-                else
-                    callback(false, req.error);
-            }
-            else
-            {
-                callback(true, serverMessage);
-            }
-
+            string txt = req.downloadHandler.text;
+            callback(!isError, isError ? (txt != "" ? txt : req.error) : txt);
         }
 
-        private static string EscapeJson(string s)
-        {
-            return s.Replace("\"", "\\\"");
-        }
-        #endregion
+        private static string EscapeJson(string s) => s.Replace("\"", "\\\"");
     }
 }

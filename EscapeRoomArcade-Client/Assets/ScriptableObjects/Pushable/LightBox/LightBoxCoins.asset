@@ -9,9 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 18364ffa6f2f6574d885afdc649b26c3, type: 3}
-  m_Name: LightWeight
+  m_Script: {fileID: 11500000, guid: 68c9f8b70951fd7409529edd7d603191, type: 3}
+  m_Name: LightBoxCoins
   m_EditorClassIdentifier: 
-  _weight: 0.5
-  _bounciness: 0.2
-  _maxSpeed: 2
+  value: 100

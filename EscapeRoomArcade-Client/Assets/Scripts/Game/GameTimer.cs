@@ -6,7 +6,10 @@ namespace Assets.Scripts.Game
     public sealed class GameTimer : MonoBehaviour
     {
         #region Events
-        public static event Action OnTimerEnd;
+        public event Action OnTimerEnd;
+        public event Action OnTimerStop;
+
+
         #endregion
 
         #region Private Variables
@@ -25,7 +28,7 @@ namespace Assets.Scripts.Game
         private void Awake()
         {
             _remaining = _duration;
-            _running = true;
+            _running = false;
         }
 
         private void Update()
@@ -44,6 +47,18 @@ namespace Assets.Scripts.Game
         #endregion
 
         #region Public Functions
+
+        public void StopTimer()
+        {
+            _running = false;
+            OnTimerStop?.Invoke();
+        }
+
+        public void StartTimer()
+        {
+            _running = true;
+        }
+
         public void Stop() => _running = false;
         #endregion
     }

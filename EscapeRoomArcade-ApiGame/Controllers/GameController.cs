@@ -52,12 +52,15 @@ namespace EscapeRoomApi.Controllers
             var multiplier = 1f + (user.Level - 1) * 0.1f;
             var finalEarned = (int)(dto.CoinsEarned * multiplier);
 
-            user.TotalCoins += finalEarned;
+            if (dto.Win)
+            {
+                user.TotalCoins += finalEarned;
 
-            while (user.TotalCoins >= user.Level * 1000)
-                user.Level++;
+                while (user.TotalCoins >= user.Level * 1000)
+                    user.Level++;
 
-            await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
+            }
 
             return Ok(new
             {

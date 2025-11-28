@@ -6,6 +6,8 @@ namespace Assets.Scripts.Object
     public class PushableObject : MonoBehaviour
     {
         #region Private Variables
+        [SerializeField] private PushableItemData _data;
+
         [SerializeField, Tooltip("Object type defining weight and physics behavior.")]
         private PushableObjectType _type;
 
@@ -16,6 +18,8 @@ namespace Assets.Scripts.Object
         public float Weight => _type.Weight;
         public Rigidbody2D Rigidbody => _rb;
         public float MaxSpeed => _type.MaxSpeed;
+        public int Value => _data != null ? _data.value : 0;
+
         #endregion
 
         #region Monobehaviour Functions

@@ -1,34 +1,51 @@
 using Assets.Scripts.Player;
+using Assets.Scripts.Api;
 using UnityEngine;
+using Assets.Scripts.Score;
+using Assets.Scripts.UI;
 
 namespace Assets.Scripts.Game
 {
     public sealed class GameEndController : MonoBehaviour
     {
-        #region Private Variables
-        [SerializeField] private GameObject _endgamePanel;
         [SerializeField] private PlayerController _player;
-        #endregion
+        [SerializeField] private EndGameUI _endUI;
+        [SerializeField] private GameTimer _timer;
 
-        #region Monobehaviour Functions
+
         private void OnEnable()
         {
-            GameTimer.OnTimerEnd += HandleEnd;
+            _timer.OnTimerEnd += HandleEnd;
+            _timer.OnTimerStop += HandleWin;
         }
 
         private void OnDisable()
         {
-            GameTimer.OnTimerEnd -= HandleEnd;
+            _timer.OnTimerEnd -= HandleEnd;
+            _timer.OnTimerStop -= HandleWin;
         }
-        #endregion
 
-        #region Private Functions
         private void HandleEnd()
         {
             _player.DisableInput();
-            _endgamePanel.SetActive(true);
             Time.timeScale = 0f;
+            _endUI.ShowLose();
         }
-        #endregion
+
+        private void HandleWin()
+        {
+            _player.DisableInput();
+            Time.timeScale = 0f;
+            _endUI.ShowWin();
+        }
+    }
+
+    [System.Serializable]
+    public struct EndRunPayload
+    {
+        public string playerName;
+        public int objectsPushed;
+        public int coinsEarned;
+        public bool win;
     }
 }

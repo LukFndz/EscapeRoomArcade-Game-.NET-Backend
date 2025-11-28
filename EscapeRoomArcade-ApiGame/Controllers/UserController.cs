@@ -77,16 +77,33 @@ namespace EscapeRoomArcade_ApiGame.Controllers
 
         // GET api/user/leaderboard
         [HttpGet("leaderboard")]
-        public async Task<IActionResult> Leaderboard()
+        public async Task<IActionResult> GetLeaderboard()
         {
-            var users = await _context.Users
-                .OrderByDescending(x => x.TotalCoins)
-                .Take(20)
+            var top = await _context.Users
+                .OrderByDescending(u => u.TotalCoins)
+                .Take(10)
+                .Select(u => new LeaderboardDto
+                {
+                    PlayerName = u.PlayerName,
+                    TotalCoins = u.TotalCoins
+                })
                 .ToListAsync();
 
-            var dto = _mapper.Map<List<LeaderboardDto>>(users);
-
-            return Ok(dto);
+            return Ok(top);
         }
+
+        [HttpGet("rank/{playerName}")]
+        public async Task<IActionResult> GetRank(string playerName)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.PlayerName == playerName);
+            if (user == null) return NotFound();
+
+            int rank = await _context.Users
+                .CountAsync(u => u.TotalCoins > user.TotalCoins) + 1;
+
+            return Ok(new { rank = rank, coins = user.TotalCoins });
+        }
+
+
     }
 }
