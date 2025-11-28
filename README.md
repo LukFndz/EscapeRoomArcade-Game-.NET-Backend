@@ -1,4 +1,4 @@
-<img width="453" height="76" alt="image" src="https://github.com/user-attachments/assets/a25f9a54-53a9-4b66-bcfe-2b903213195e" /># Escape Room Push-Out Game
+Escape Room Push-Out Game
 A small Unity + .NET API project showcasing backend communication, physics gameplay and persistent progression.
 
 ## Features
