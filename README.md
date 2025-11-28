@@ -1,5 +1,5 @@
 Escape Room Push-Out Game
-A small Unity + .NET API project showcasing backend communication, physics gameplay and persistent progression.
+A small Unity + .NET API project showcasing backend communication with a SQLite DB, physics gameplay and persistent progression.
 
 ## Features
 - Unity top-down 2D gameplay
