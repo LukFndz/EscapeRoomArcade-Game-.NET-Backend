@@ -10,6 +10,7 @@ namespace Assets.Scripts.Room
         [SerializeField] private GameTimer _timer;
         [SerializeField] private ObjectSpawner _spawner;
         [SerializeField] private PlayerController _player;
+        [SerializeField] private ParticleSystem _exitParticle;
 
         private bool _playerInside = false;
 
@@ -33,6 +34,8 @@ namespace Assets.Scripts.Room
 
         private void StartRoom()
         {
+            var part = _exitParticle.main;
+            part.startColor = Color.red;
             _timer.StartTimer();
             _spawner.EnableSpawning();
         }
