@@ -19,3 +19,4 @@ A small Unity + .NET API project showcasing backend communication with a SQLite 
 # How it Works
 <img width="453" height="76" alt="image" src="https://github.com/user-attachments/assets/e3a71eac-abe6-4605-87c0-52b492621ec9" />
 It´s a local backend + Unity practice, so be sure that at this component on MainMenu scene, have the port where you host the API of the .NET Web Project.
+After this, execute the ASP.NET Project, and as last step, just play or build from unity (MainMenu scene as first scene).
